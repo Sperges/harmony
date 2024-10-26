@@ -16,11 +16,11 @@ type Handler[T any] struct {
 	handlerType string
 }
 
-func NewHandler[T any](handler func(context.Context, T) error) Handler[T] {
+func NewHandler[T any](handler func(context.Context, T) error) IHandler {
 	h := Handler[T]{
 		Handler: handler,
 	}
-	h.handlerType = structNameAsJsonString(h)
+	h.handlerType = structNameAsJsonString(*new(T))
 	return h
 }
 

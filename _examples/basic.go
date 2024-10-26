@@ -12,7 +12,7 @@ type ChatMessage struct {
 }
 
 func HandleChatMessage(ctx context.Context, message ChatMessage) error {
-	fmt.Printf("%s: %s", message.Sender, message.Message)
+	fmt.Printf("%s: %s\n", message.Sender, message.Message)
 	return nil
 }
 
@@ -21,7 +21,7 @@ type StatusUpdate struct {
 }
 
 func HandleStatusUpdate(ctx context.Context, message StatusUpdate) error {
-	fmt.Printf("The new status is: %s", message.Status)
+	fmt.Printf("The new status is: %s\n", message.Status)
 	return nil
 }
 
