@@ -7,16 +7,16 @@ import (
 )
 
 type Harmony struct {
-	handlers map[string]IHandler
+	handlers map[string]Handler
 }
 
 func New() *Harmony {
 	return &Harmony{
-		handlers: map[string]IHandler{},
+		handlers: map[string]Handler{},
 	}
 }
 
-func (h *Harmony) Register(handler IHandler) {
+func (h *Harmony) Register(handler Handler) {
 	c := handler.Type()
 	if _, ok := h.handlers[c]; ok {
 		// can this be turned into a compilation error?
