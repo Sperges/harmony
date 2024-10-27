@@ -6,17 +6,19 @@ import (
 	"fmt"
 )
 
+type HandlerFunc[T any] func(context.Context, T) error
+
 type Handler interface {
 	Type() string
-	Handle(context.Context, any) error
+	Handle(context.Context, []byte) error
 }
 
 type GenericHandler[T any] struct {
-	Handler     func(context.Context, T) error
+	Handler     HandlerFunc[T]
 	handlerType string
 }
 
-func NewHandler[T any](handler func(context.Context, T) error) Handler {
+func NewHandler[T any](handler HandlerFunc[T]) Handler {
 	h := GenericHandler[T]{
 		Handler: handler,
 	}
@@ -28,10 +30,9 @@ func (h GenericHandler[T]) Type() string {
 	return h.handlerType
 }
 
-func (h GenericHandler[T]) Handle(ctx context.Context, message any) error {
+func (h GenericHandler[T]) Handle(ctx context.Context, b []byte) error {
 	var obj T
-	// TODO: casting `any` here seems sussy
-	if err := json.Unmarshal(message.([]byte), &obj); err != nil {
+	if err := json.Unmarshal(b, &obj); err != nil {
 		return fmt.Errorf("unable to unmarshal message: %w", err)
 	}
 	return h.Handler(ctx, obj)

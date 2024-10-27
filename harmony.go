@@ -26,7 +26,10 @@ func (h *Harmony) Register(handler Handler) {
 }
 
 func (h *Harmony) Handle(ctx context.Context, b []byte) error {
-	var msg Message
+	var msg struct {
+		Type string          `json:"type"`
+		Data json.RawMessage `json:"data"`
+	}
 	if err := json.Unmarshal(b, &msg); err != nil {
 		return fmt.Errorf("unable to unmarshal harmony message: %w", err)
 	}
