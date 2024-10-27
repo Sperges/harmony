@@ -37,8 +37,13 @@ func main() {
 
 	h := harmony.New()
 
-	h.Register(harmony.NewHandler(HandleChatMessage))
-	h.Register(harmony.NewHandler(HandleStatusUpdate))
+	// which looks better?
+
+	// h.Register(harmony.NewHandler(HandleChatMessage))
+	// h.Register(harmony.NewHandler(HandleStatusUpdate))
+
+	harmony.Register(h, HandleChatMessage)
+	harmony.Register(h, HandleStatusUpdate)
 
 	println(string(chatMsg))
 	h.Handle(context.Background(), chatMsg)

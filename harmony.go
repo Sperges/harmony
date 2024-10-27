@@ -6,6 +6,11 @@ import (
 	"fmt"
 )
 
+type Message[T any] struct {
+	Type string `json:"type"`
+	Data T      `json:"data"`
+}
+
 type Harmony struct {
 	handlers map[string]Handler
 }
@@ -16,13 +21,18 @@ func New() *Harmony {
 	}
 }
 
+func Register[T any](harmony *Harmony, handlerFunc HandlerFunc[T]) {
+	handler := NewHandler(handlerFunc)
+	harmony.Register(handler)
+}
+
 func (h *Harmony) Register(handler Handler) {
-	c := handler.Type()
-	if _, ok := h.handlers[c]; ok {
+	handlerType := handler.Type()
+	if _, ok := h.handlers[handlerType]; ok {
 		// can this be turned into a compilation error?
-		panic(fmt.Sprintf("attempt to register existing handler: %s", c))
+		panic(fmt.Sprintf("attempt to register existing handler: %s", handlerType))
 	}
-	h.handlers[c] = handler
+	h.handlers[handlerType] = handler
 }
 
 func (h *Harmony) Handle(ctx context.Context, b []byte) error {
@@ -38,4 +48,11 @@ func (h *Harmony) Handle(ctx context.Context, b []byte) error {
 		return fmt.Errorf("no registered handler for message type: %s", msg.Type)
 	}
 	return handler.Handle(ctx, []byte(msg.Data))
+}
+
+func NewBytes[T any](data T) ([]byte, error) {
+	return json.Marshal(Message[T]{
+		Type: structNameAsJsonString(data),
+		Data: data,
+	})
 }
